@@ -9,15 +9,18 @@ use rustc_errors::{DiagCtxtHandle, FatalError};
 use rustc_session::config::OutputType;
 use tracing::error;
 
-pub(crate) unsafe fn codegen(
+pub(crate) fn codegen(
     cgcx: &CodegenContext<crate::CCodegen>,
-    _dcx: DiagCtxtHandle<'_>,
     module: ModuleCodegen<String>,
     _config: &ModuleConfig,
 ) -> Result<CompiledModule, FatalError> {
-    let module_name = module.name.clone();
-    let module_name = Some(&module_name[..]);
-    let obj_out = cgcx.output_filenames.temp_path(OutputType::Object, module_name);
+    let dcx = cgcx.create_dcx();
+    let dcx = dcx.handle();
+    let obj_out = cgcx.output_filenames.temp_path_for_cgu(
+        OutputType::Object,
+        &module.name,
+        cgcx.invocation_temp.as_deref(),
+    );
     let c_out = obj_out.with_extension("c");
 
     // output c source code
@@ -51,7 +54,15 @@ pub(crate) unsafe fn codegen(
         return Err(FatalError);
     }
 
-    Ok(module.into_compiled_module(true, false, false, false, false, &cgcx.output_filenames))
+    Ok(module.into_compiled_module(
+        true,
+        false,
+        false,
+        false,
+        false,
+        &cgcx.output_filenames,
+        cgcx.invocation_temp.as_deref(),
+    ))
 }
 
 pub(crate) fn link(
