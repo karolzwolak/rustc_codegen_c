@@ -1,8 +1,7 @@
 use std::fs;
 use std::io::Write;
-use std::process::Stdio;
+use std::process::{Command, Stdio};
 
-use rustc_codegen_ssa::back::command::Command;
 use rustc_codegen_ssa::back::write::{CodegenContext, ModuleConfig};
 use rustc_codegen_ssa::{CompiledModule, ModuleCodegen};
 use rustc_errors::{DiagCtxtHandle, FatalError};
@@ -34,7 +33,6 @@ pub(crate) fn codegen(
     // FIXME: flush_linked_file (windows)
     let mut cmd = Command::new("clang");
     cmd.arg(&c_out).arg("-o").arg(&obj_out).arg("-c");
-    let mut cmd = cmd.command();
     let output = match cmd
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
