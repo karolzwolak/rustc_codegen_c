@@ -79,7 +79,7 @@ impl<'tcx, 'mx> HasTyCtxt<'tcx> for CodegenCx<'tcx, 'mx> {
 
 impl<'tcx, 'mx> HasDataLayout for CodegenCx<'tcx, 'mx> {
     fn data_layout(&self) -> &TargetDataLayout {
-        todo!()
+        &self.tcx.data_layout
     }
 }
 
