@@ -10,6 +10,7 @@ extern crate rustc_errors;
 extern crate rustc_fluent_macro;
 extern crate rustc_hash;
 extern crate rustc_hir;
+extern crate rustc_macros;
 extern crate rustc_metadata;
 extern crate rustc_middle;
 extern crate rustc_session;
@@ -44,6 +45,7 @@ mod archive;
 mod base;
 mod builder;
 mod context;
+mod errors;
 mod write;
 
 rustc_fluent_macro::fluent_messages! { "../messages.ftl" }
